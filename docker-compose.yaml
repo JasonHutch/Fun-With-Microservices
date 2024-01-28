@@ -10,4 +10,19 @@ services:
       - "4000:80"
     environment:
       - PORT=80
+      - VIDEO_STORAGE_HOST=azure-storage
+      - VIDEO_STORAGE_PORT=80
+    restart: "no"
+  azure-storage:
+    image: azure-storage
+    build:
+      context: ./azure-storage
+      dockerfile: Dockerfile
+    container_name: azure-storage
+    ports:
+      - "4001:80"
+    environment:
+      - PORT=80
+      - STORAGE_ACCOUNT_NAME=flixtubestorage1
+      - STORAGE_ACCESS_KEY=hCVnXel5h3Ag2Le89IEM/VZ5J76jJLq9Yb3UMzd0MrOP+DaQDi9d51AwLOf2pYtXw+5BaH4ZkEuF+ASts6IOLw==
     restart: "no"
