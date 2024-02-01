@@ -2,4 +2,5 @@ FROM node:18.17
 WORKDIR /usr/src/app
 COPY package*.json ./
 CMD npm install --prefer-online && \
+    npx wait-port rabbit:5672 && \
     npm run start:dev
