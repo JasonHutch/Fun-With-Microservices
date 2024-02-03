@@ -27,15 +27,14 @@ function connectRabbit() {
         .then(connection => {
             console.log("Connected to RabbitMQ");
             return connection.createChannel()
-            .then(channel => {
-                return channel.assertExchange("viewed", "fanout")
-                    .then(() => {
-                        return channel;
-                    })
-            })
+                .then(channel => {
+                    return channel.assertExchange("viewed", "fanout")
+                        .then(() => {
+                            return channel;
+                        })
+                })
         });
 }
-
 function connectdb() {
     return mongodb.MongoClient.connect(DB_HOST)
         .then((client) => {
@@ -51,9 +50,9 @@ function sendViewedMessage(messageChannel, videoPath) {
 }
 
 function setupHandlers(app, db, messageChannel) {
-    app.get('/', (req,res) => {
-        res.send('Hello World');
-    })
+    // app.get('/', (req, res) => {
+    //     res.send('Hello World');
+    // })
     app.get('/video', (req, res) => {
         const videoId = new mongodb.ObjectId(req.query.id);
         const videoCollection = db.collection('videos');
@@ -67,16 +66,16 @@ function setupHandlers(app, db, messageChannel) {
                 }
 
                 const forwardRequest = http.request({
-                    host: VIDEO_STORAGE_HOST,
-                    port: VIDEO_STORAGE_PORT,
-                    path: `/video?path=${videoRecord.videoPath}`,
-                    method: 'GET',
-                    headers: req.headers,
-                },
+                        host: VIDEO_STORAGE_HOST,
+                        port: VIDEO_STORAGE_PORT,
+                        path: `/video?path=${videoRecord.videoPath}`,
+                        method: 'GET',
+                        headers: req.headers,
+                    },
                     forwardResponse => {
                         res.writeHeader(forwardResponse.statusCode, forwardResponse.headers);
                         forwardResponse.pipe(res);
-                    });
+                });
                 req.pipe(forwardRequest);
                 sendViewedMessage(messageChannel, videoRecord.videoPath);
             })
@@ -88,17 +87,17 @@ function setupHandlers(app, db, messageChannel) {
 
 }
 
-function startHttpServer(db,messageChannel) {
-   return new Promise(resolve => {
-    const app = express();
-    app.use(bodyParser.json());
-    setupHandlers(app, db, messageChannel);
+function startHttpServer(db, messageChannel) {
+    return new Promise(resolve => {
+        const app = express();
+        app.use(bodyParser.json());
+        setupHandlers(app, db, messageChannel);
 
-    app.listen(PORT, () => {
-        console.log(`Microservice online on http://localhost:${PORT}`);
-        resolve();
+        app.listen(PORT, () => {
+            console.log(`Microservice online on http://localhost:${PORT}`);
+            resolve();
+        })
     })
-   })
 }
 
 function main() {
