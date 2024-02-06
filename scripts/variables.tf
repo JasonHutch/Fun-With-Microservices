@@ -11,9 +11,9 @@ variable admin_username {
 }
 
 variable client_id {
-    default = "8ef25035-1a4d-4e01-8fdd-b6e2551b70e9"
+    default = "ENTER_CLIENT_ID"
 }
 
 variable client_secret {
-    default = "7018Q~76OuxElpYhJa4EEnY~mUrJxSgFUWSOdatP"
+    default = "ENTER_CLIENT_SECRET"
 }
